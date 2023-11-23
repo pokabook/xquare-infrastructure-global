@@ -13,8 +13,9 @@ jobs:
 
       - name: Create new branch
         run: |
-          BRANCH_NAME="${{ github.event.client_payload.chart }}-version-up-$(date +%Y%m%d)"
+          BRANCH_NAME="${{ github.event.client_payload.chart }}-version-up-$(date +'%Y%m%d')"
           git checkout -b $BRANCH_NAME
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Update helm block
         run: |
