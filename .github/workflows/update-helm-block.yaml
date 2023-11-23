@@ -12,10 +12,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Create new branch
+        id: branch
         run: |
           echo ${{ github.event.client_payload.chart }}
           BRANCH_NAME="${{ github.event.client_payload.chart }}-version-up-$(date +'%Y%m%d')"
           git checkout -b $BRANCH_NAME
+          echo "BRANCH_NAME=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Update helm block
         run: |
@@ -29,11 +31,11 @@ jobs:
           git push origin HEAD
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.TOKEN }}
           commit-message: Update helm chart version
           title: Update helm chart version to ${{ github.event.client_payload.version }}
           body: Update helm chart version to ${{ github.event.client_payload.version }}
           base: main
-          head: ${{ github.event.client_payload.chart }}-version-up-$(date +%Y%m%d)
+          head: ${{ steps.branch.outputs.BRANCH_NAME }}
