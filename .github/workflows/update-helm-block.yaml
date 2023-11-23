@@ -38,4 +38,4 @@ jobs:
           title: Update helm chart version to ${{ github.event.client_payload.version }}
           body: Update helm chart version to ${{ github.event.client_payload.version }}
           base: main
-          head: ${{ steps.branch.outputs.BRANCH_NAME }}
+          head: ${{ github.ref }}
