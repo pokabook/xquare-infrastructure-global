@@ -1,0 +1,28 @@
+name: Update Helm Block
+on:
+  repository_dispatch:
+    types: [chart-update]
+
+jobs:
+  update-helm-block:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.TOKEN }}
+
+      - name: Update helm block
+        run: |
+          sed "s/$CHART-verison =.*/$CHART-verison = $VERSION/" helm.tf
+        env:
+          CHART: ${{ github.event.client_payload.chart }}
+          VERSION: ${{ github.event.client_payload.version }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.TOKEN }}
+          commit-message: Update helm chart version
+          title: Update helm chart version to ${{ github.event.client_payload.version }}
+          body: Update helm chart version to ${{ github.event.client_payload.version }}
