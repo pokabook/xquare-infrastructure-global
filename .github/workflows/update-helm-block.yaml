@@ -17,7 +17,7 @@ jobs:
           echo ${{ github.event.client_payload.chart }}
           BRANCH_NAME="${{ github.event.client_payload.chart }}-version-up-$(date +'%Y%m%d')"
           git checkout -b $BRANCH_NAME
-          echo "BRANCH_NAME=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
+          echo "branch_name=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Update helm block
         run: |
@@ -38,4 +38,4 @@ jobs:
           title: Update helm chart version to ${{ github.event.client_payload.version }}
           body: Update helm chart version to ${{ github.event.client_payload.version }}
           base: main
-          head: ${{ steps.branch.outputs.BRANCH_NAME }}
+          head: ${{ steps.branch.outputs.branch_name }}
