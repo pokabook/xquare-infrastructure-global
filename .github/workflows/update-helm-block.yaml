@@ -15,7 +15,7 @@ jobs:
         id: branch
         run: |
           echo ${{ github.event.client_payload.chart }}
-          BRANCH_NAME="${{ github.event.client_payload.chart }}-version-up-$(date +'%Y%m%d')"
+          BRANCH_NAME="${{ github.event.client_payload.chart }}-version-up-to-${{ github.event.client_payload.version }}"
           git checkout -b $BRANCH_NAME
           echo "branch_name=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
 
