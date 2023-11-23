@@ -16,13 +16,12 @@ jobs:
           echo ${{ github.event.client_payload.chart }}
           BRANCH_NAME="${{ github.event.client_payload.chart }}-version-up-$(date +'%Y%m%d')"
           git checkout -b $BRANCH_NAME
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Update helm block
         run: |
           CHART=${{ github.event.client_payload.chart }}
           VERSION=${{ github.event.client_payload.version }}
-          sed -i 's/'$CHART'-version = .*/'$CHART'-version = "'$VERSION'"/' helm.tf
+          sed "s/\($CHART-version =\) .*/\1 \"$VERSION\"/" helm.tf
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git commit -am "Update ${CHART} version to ${VERSION}"
@@ -36,4 +35,4 @@ jobs:
           title: Update helm chart version to ${{ github.event.client_payload.version }}
           body: Update helm chart version to ${{ github.event.client_payload.version }}
           base: main
-          head: ${{ github.event.client_payload.chart }}-version-up-$(date +%Y%m%d%H%M%S)
+          head: ${{ github.event.client_payload.chart }}-version-up-$(date +%Y%m%d)
