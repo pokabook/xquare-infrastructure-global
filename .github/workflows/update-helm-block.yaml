@@ -11,10 +11,12 @@ jobs:
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.TOKEN }}
+          ref: refs/heads/${{ github.event.client_payload.chart }}-update
 
       - name: Update helm block
         run: |
-          sed "s/$CHART-verison =.*/$CHART-verison = $VERSION/" helm.tf
+          sed -i 's/'$CHART'-version = .*/'$CHART'-version = "'$VERSION'"/' helm.tf
+          git commit -am "Update $CHART version to $VERSION"
         env:
           CHART: ${{ github.event.client_payload.chart }}
           VERSION: ${{ github.event.client_payload.version }}
