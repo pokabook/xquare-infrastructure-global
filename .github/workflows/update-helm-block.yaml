@@ -15,7 +15,7 @@ jobs:
         id: branch
         run: |
           echo ${{ github.event.client_payload.chart }}
-          BRANCH_NAME="${{ github.event.client_payload.chart }}-version-up-$(date +'%Y%m%d')"
+          BRANCH_NAME="${{ github.event.client_payload.chart }}-version-up-to-${{ github.event.client_payload.version }}"
           git checkout -b $BRANCH_NAME
           echo "branch_name=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
 
@@ -28,14 +28,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git add helm.tf
           git commit -m "Update ${CHART} version to ${VERSION}"
-          git push origin HEAD
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.TOKEN }}
-          commit-message: Update helm chart version
-          title: Update helm chart version to ${{ github.event.client_payload.version }}
-          body: Update helm chart version to ${{ github.event.client_payload.version }}
-          base: main
-          head: ${{ steps.branch.outputs.branch_name }}
+          git push origin ${{ steps.branch.outputs.branch_name }}
+          gh pr create --title "Update helm chart version" --body "Update helm chart version" --base main --head  ${{ steps.branch.outputs.branch_name }}
+        env:
+          GH_TOKEN: ${{ github.token }}
